@@ -1,37 +1,14 @@
 # faceswap-GAN
 Adding Adversarial loss and perceptual loss (VGGface) to deepfakes'(reddit user) auto-encoder architecture.
 
-## Updates
-| Date          | Update        |
-| ------------- | ------------- |    
-| 2018-08-27      | **Colab support:** A [colab notebook](https://colab.research.google.com/github/shaoanlu/faceswap-GAN/blob/master/colab_demo/faceswap-GAN_colab_demo.ipynb) for faceswap-GAN v2.2 is provided.| 
-| 2018-07-25      | **Data preparation:** Add a [new notebook](https://github.com/shaoanlu/faceswap-GAN/blob/master/MTCNN_video_face_detection_alignment.ipynb) for video pre-processing in which MTCNN is used for face detection as well as face alignment.| 
-| 2018-06-29      | **Model architecture**: faceswap-GAN v2.2 now supports different output resolutions: 64x64, 128x128, and 256x256. Default `RESOLUTION = 64` can be changed in the config cell of [v2.2 notebook](https://github.com/shaoanlu/faceswap-GAN/blob/master/FaceSwap_GAN_v2.2_train_test.ipynb).|
-| 2018-06-25      | **New version**: faceswap-GAN v2.2 has been released. The main improvements of v2.2 model are its capability of generating realistic and consistent eye movements (results are shown below, or Ctrl+F for eyes), as well as higher video quality with face alignment.|
-| 2018-06-06      | **Model architecture**: Add a self-attention mechanism proposed in [SAGAN](https://arxiv.org/abs/1805.08318) into V2 GAN model. (Note: There is still no official code release for SAGAN, the implementation in this repo. could be wrong. We'll keep an eye on it.)|
+# Extract images for training 
+Run command 'python faceswap.py extract -i input_dir(must be images)' -o output_dir' to extract faces
 
-## Google Colab support
-Here is a [playground notebook](https://colab.research.google.com/github/shaoanlu/faceswap-GAN/blob/master/colab_demo/faceswap-GAN_colab_demo.ipynb) for faceswap-GAN v2.2 on Google Colab. Users can train their own model in the browser.
+# Train 
+Run 'python train.py' to train and setting the parameters from face A and face B
 
-## Descriptions  
-### faceswap-GAN v2.2
-* [FaceSwap_GAN_v2.2_train_test.ipynb](https://github.com/shaoanlu/faceswap-GAN/blob/master/FaceSwap_GAN_v2.2_train_test.ipynb)
-  - Notebook for model training of faceswap-GAN model version 2.2.
-  - This notebook also provides code for still image transformation at the bottom.
-  - Require additional training images generated through [prep_binary_masks.ipynb](https://github.com/shaoanlu/faceswap-GAN/blob/master/prep_binary_masks.ipynb).
-  
-* [FaceSwap_GAN_v2.2_video_conversion.ipynb](https://github.com/shaoanlu/faceswap-GAN/blob/master/FaceSwap_GAN_v2.2_video_conversion.ipynb)
-  - Notebook for video conversion of faceswap-GAN model version 2.2.
-  - Face alignment using 5-points landmarks is introduced to video conversion.
-  
-* [prep_binary_masks.ipynb](https://github.com/shaoanlu/faceswap-GAN/blob/master/prep_binary_masks.ipynb)
-  - Notebook for training data preprocessing. Output binary masks are save in `./binary_masks/faceA_eyes` and `./binary_masks/faceB_eyes` folders.
-  - Require [face_alignment](https://github.com/1adrianb/face-alignment) package. (An alternative method for generating binary masks (not requiring `face_alignment` and `dlib` packages) can be found in [MTCNN_video_face_detection_alignment.ipynb](https://github.com/shaoanlu/faceswap-GAN/blob/master/MTCNN_video_face_detection_alignment.ipynb).) 
-  
-* [MTCNN_video_face_detection_alignment.ipynb](https://github.com/shaoanlu/faceswap-GAN/blob/master/MTCNN_video_face_detection_alignment.ipynb)
-  - This notebook performs face detection/alignment on the input video. 
-  - Detected faces are saved in `./faces/raw_faces` and `./faces/aligned_faces` for non-aligned/aligned results respectively.
-  - Crude eyes binary masks are also generated and saved in `./faces/binary_masks_eyes`. These binary masks can serve as a suboptimal alternative to masks generated through [prep_binary_masks.ipynb](https://github.com/shaoanlu/faceswap-GAN/blob/master/prep_binary_masks.ipynb). 
+# Convert 
+Run 'detected_faces.py' to convert face and apply fixes
   
 **Usage**
 1. Run [MTCNN_video_face_detection_alignment.ipynb](https://github.com/shaoanlu/faceswap-GAN/blob/master/MTCNN_video_face_detection_alignment.ipynb) to extract faces from videos. Manually move/rename the aligned face images into `./faceA/` or `./faceB/` folders.
@@ -72,11 +49,6 @@ Here is a [playground notebook](https://colab.research.google.com/github/shaoanl
 - **Attention mask:** Model predicts an attention mask that helps on handling occlusion, eliminating artifacts, and producing natrual skin tone.
 
 - **Configurable input/output resolution (v2.2)**: The model supports 64x64, 128x128, and 256x256 outupt resolutions.
-
-- **Face tracking/alignment using MTCNN and Kalman filter in video conversion**: 
-  - MTCNN is introduced for more stable detections and reliable face alignment (FA). 
-  - Kalman filter smoothen the bounding box positions over frames and eliminate jitter on the swapped face.
-  ![comp_FA](https://www.dropbox.com/s/kviue4065gdqfnt/comp_fa.gif?raw=1)
   
 - **Eyes-aware training:** Introduce high reconstruction loss and edge loss in eyes area, which guides the model to generate realistic eyes.
 
